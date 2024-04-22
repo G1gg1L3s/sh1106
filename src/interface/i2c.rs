@@ -32,7 +32,7 @@ where
     async fn send_commands(&mut self, cmds: &[u8]) -> Result<(), Self::Error> {
         // Copy over given commands to new aray to prefix with command identifier
         let mut writebuf: [u8; 8] = [0; 8];
-        writebuf[1..=cmds.len()].copy_from_slice(&cmds);
+        writebuf[1..=cmds.len()].copy_from_slice(cmds);
 
         self.i2c
             .write(self.addr, &writebuf[..=cmds.len()])
@@ -60,7 +60,7 @@ where
 
         for chunk in buf.chunks(CHUNKLEN) {
             // Copy over all data from buffer, leaving the data command byte intact
-            writebuf[1..BUFLEN].copy_from_slice(&chunk);
+            writebuf[1..BUFLEN].copy_from_slice(chunk);
 
             self.i2c
                 .write(

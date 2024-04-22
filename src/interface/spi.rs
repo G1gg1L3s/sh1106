@@ -38,13 +38,13 @@ where
 
     async fn send_commands(&mut self, cmds: &[u8]) -> Result<(), Self::Error> {
         self.dc.set_low().map_err(Error::Pin)?;
-        self.spi.write(&cmds).await.map_err(Error::Comm)?;
+        self.spi.write(cmds).await.map_err(Error::Comm)?;
         self.dc.set_high().map_err(Error::Pin)
     }
 
     async fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
         // 1 = data, 0 = command
         self.dc.set_high().map_err(Error::Pin)?;
-        self.spi.write(&buf).await.map_err(Error::Comm)
+        self.spi.write(buf).await.map_err(Error::Comm)
     }
 }

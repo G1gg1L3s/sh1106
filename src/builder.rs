@@ -152,6 +152,12 @@ pub struct NoOutputPin<PinE = ()> {
     _m: PhantomData<PinE>,
 }
 
+impl<PinE: hal::digital::Error> Default for NoOutputPin<PinE> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<PinE: hal::digital::Error> NoOutputPin<PinE> {
     /// Create a new instance of `NoOutputPin`
     pub fn new() -> Self {
