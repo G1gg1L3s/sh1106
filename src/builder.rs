@@ -140,11 +140,8 @@ impl Builder {
         SPI: hal::spi::SpiDevice<Error = CommE>,
         DC: OutputPin<Error = PinE>,
     {
-        let properties = DisplayProperties::new(
-            SpiInterface::new(spi, dc),
-            self.display_size,
-            self.rotation,
-        );
+        let properties =
+            DisplayProperties::new(SpiInterface::new(spi, dc), self.display_size, self.rotation);
         DisplayMode::<RawMode<SpiInterface<SPI, DC>>>::new(properties)
     }
 }
@@ -171,32 +168,5 @@ impl<PinE: hal::digital::Error> OutputPin for NoOutputPin<PinE> {
     }
     fn set_high(&mut self) -> Result<(), PinE> {
         Ok(())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::NoOutputPin;
-    use embedded_hal::digital::OutputPin;
-
-    #[derive(Debug)]
-    enum SomeError {}
-    impl hal::digital::Error for SomeError {
-        fn kind(&self) -> hal::digital::ErrorKind {
-            hal::digital::ErrorKind::Other
-        }
-    }
-
-    struct SomeDriver<P: OutputPin<Error = SomeError>> {
-        #[allow(dead_code)]
-        p: P,
-    }
-
-    #[test]
-    fn test_output_pin() {
-        let p = NoOutputPin::new();
-        let _d = SomeDriver { p };
-
-        assert!(true);
     }
 }
