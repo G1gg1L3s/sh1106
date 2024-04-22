@@ -116,7 +116,7 @@ impl Builder {
     /// Finish the builder and use I2C to communicate with the display
     pub fn connect_i2c<I2C, CommE>(self, i2c: I2C) -> DisplayMode<RawMode<I2cInterface<I2C>>>
     where
-        I2C: hal::i2c::I2c<Error = CommE>,
+        I2C: async_hal::i2c::I2c<Error = CommE>,
     {
         let properties = DisplayProperties::new(
             I2cInterface::new(i2c, self.i2c_addr),
@@ -137,7 +137,7 @@ impl Builder {
         dc: DC,
     ) -> DisplayMode<RawMode<SpiInterface<SPI, DC>>>
     where
-        SPI: hal::spi::SpiDevice<Error = CommE>,
+        SPI: async_hal::spi::SpiDevice<Error = CommE>,
         DC: OutputPin<Error = PinE>,
     {
         let properties =

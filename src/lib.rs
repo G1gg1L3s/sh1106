@@ -90,6 +90,7 @@ pub enum Error<CommE, PinE> {
 }
 
 extern crate embedded_hal as hal;
+extern crate embedded_hal_async as async_hal;
 
 pub mod builder;
 mod command;

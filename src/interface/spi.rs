@@ -16,7 +16,7 @@ pub struct SpiInterface<SPI, DC> {
 impl<SPI, DC, CommE, PinE> SpiInterface<SPI, DC>
 where
     // we shouldn't need the whole bus but we need to flush before setting dc
-    SPI: hal::spi::SpiDevice<u8, Error = CommE>,
+    SPI: async_hal::spi::SpiDevice<u8, Error = CommE>,
     DC: OutputPin<Error = PinE>,
 {
     /// Create new SPI interface for communciation with sh1106
@@ -27,22 +27,24 @@ where
 
 impl<SPI, DC, CommE, PinE> DisplayInterface for SpiInterface<SPI, DC>
 where
-    SPI: hal::spi::SpiDevice<u8, Error = CommE>,
+    SPI: async_hal::spi::SpiDevice<u8, Error = CommE>,
     DC: OutputPin<Error = PinE>,
 {
     type Error = Error<CommE, PinE>;
 
-    fn init(&mut self) -> Result<(), Self::Error> { Ok(()) }
+    fn init(&mut self) -> Result<(), Self::Error> {
+        Ok(())
+    }
 
-    fn send_commands(&mut self, cmds: &[u8]) -> Result<(), Self::Error> {
+    async fn send_commands(&mut self, cmds: &[u8]) -> Result<(), Self::Error> {
         self.dc.set_low().map_err(Error::Pin)?;
-        self.spi.write(&cmds).map_err(Error::Comm)?;
+        self.spi.write(&cmds).await.map_err(Error::Comm)?;
         self.dc.set_high().map_err(Error::Pin)
     }
 
-    fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
+    async fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
         // 1 = data, 0 = command
         self.dc.set_high().map_err(Error::Pin)?;
-        self.spi.write(&buf).map_err(Error::Comm)
+        self.spi.write(&buf).await.map_err(Error::Comm)
     }
 }
